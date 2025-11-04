@@ -1,73 +1,89 @@
 // CMPM 121 Smelly Code Activity
 
-// This variable keeps track of the counter
-let c = 0;
+// --------------------- Constants and Variables ---------------------
+const DOC_TITLE = "Clicked ";
+const HEADING = "CMPM 121 Project";
 
-// These constants are for button IDs and heading text
-const a = "increment", b = "counter", h = "CMPM 121 Project";
+const IDS = {
+  incrementBtn: "increment",
+  decrementBtn: "decrement",
+  resetBtn: "reset",
+  counter: "counter",
+} as const;
 
+const COLORS = {
+  even: "lightblue",
+  odd: "pink",
+  default: "white",
+} as const;
+
+let count = 0;
+
+// start the app
+function start() {
+  setup();
+  handleEvents();
+}
+start();
+
+// Setup HTML
 function setup() {
-  // Create the HTML for the counter
   document.body.innerHTML = `
-    <h1>${h}</h1>
-    <p>Counter: <span id="${b}">0</span></p>
-    <button id="${a}">Click Me!</button>
-    <button id="dec">Decrement</button>
-    <button id="reset">Reset</button>
+    <h1>${HEADING}</h1>
+    <p>Counter: <span id="${IDS.counter}">0</span></p>
+    <button id="${IDS.incrementBtn}">Click Me!</button>
+    <button id="${IDS.decrementBtn}">Decrement</button>
+    <button id="${IDS.resetBtn}">Reset</button>
   `;
+}
 
-  // Get the increment button element from the document
-  const bI = document.getElementById(a);
-  // Get the decrement button element from the document
-  const bD = document.getElementById("dec");
-  // Get the reset button element from the document
-  const bR = document.getElementById("reset");
-  // Get the counter span element from the document
-  const ctr = document.getElementById(b);
+// Handle button click events
+function handleEvents() {
+  const incrementBtn = document.getElementById(IDS.incrementBtn);
+  const decrementBtn = document.getElementById(IDS.decrementBtn);
+  const resetBtn = document.getElementById(IDS.resetBtn);
+  const counter = document.getElementById(IDS.counter);
 
   // Check if any element is missing, then exit the function
-  if (!bI || !bD || !bR || !ctr) return;
+  if (!incrementBtn || !decrementBtn || !resetBtn || !counter) return;
 
-  // Add click event to the increment button
-  bI.addEventListener("click", () => {
-    // Increase the counter by 1
-    c++;
-    // Update the counter display
-    ctr.innerHTML = `${c}`;
-    // Update the document title
-    document.title = "Clicked " + c;
-    // Change the background color based on even/odd count
-    document.body.style.backgroundColor = c % 2 ? "pink" : "lightblue";
+  incrementBtn.addEventListener("click", () => {
+    updateCount(1);
   });
 
-  // Add click event to the decrement button
-  bD.addEventListener("click", () => {
-    // Decrease the counter by 1
-    c--;
-    // Update the counter display
-    ctr.innerHTML = `${c}`;
-    // Update the document title
-    document.title = "Clicked " + c;
-    // Change the background color based on even/odd count
-    document.body.style.backgroundColor = c % 2 ? "pink" : "lightblue";
+  decrementBtn.addEventListener("click", () => {
+    updateCount(-1);
   });
 
-  // Add click event to the reset button
-  bR.addEventListener("click", () => {
-    // Reset the counter to 0
-    c = 0;
-    // Update the counter display
-    ctr.innerHTML = `${c}`;
-    // Update the document title
-    document.title = "Clicked " + c;
-    // Change the background color based on even/odd count
-    document.body.style.backgroundColor = c % 2 ? "pink" : "lightblue";
+  resetBtn.addEventListener("click", () => {
+    resetCount();
   });
 }
 
-function start() {
-  // Call setup to initialize the UI
-  setup();
+// --------------------- Helper Functions ---------------------
+function updateCount(delta: number) {
+  count += delta;
+  updateUI();
 }
-// Start the counter app
-start();
+
+function resetCount() {
+  count = 0;
+  updateUI();
+}
+
+// Update the counter display, document title, and background color (based on even/odd count)
+function updateUI() {
+  const counter = document.getElementById(IDS.counter);
+  if (!counter) return;
+
+  counter.innerHTML = `${count}`;
+  document.title = DOC_TITLE + count;
+
+  // Change background color based on count (0 = default, even = lightblue, odd = pink)
+  if (count === 0) {
+    document.body.style.backgroundColor = COLORS.default;
+    return;
+  } else {
+    document.body.style.backgroundColor = count % 2 ? COLORS.odd : COLORS.even;
+  }
+}
